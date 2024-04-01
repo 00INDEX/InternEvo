@@ -601,7 +601,6 @@ class PackedFlashLlamaLayer1D(nn.Module):
                 dtype=dtype,
                 mlp_layer_fusion=mlp_layer_fusion,
                 sequence_parallel=sequence_parallel,
-                multiple_of=multiple_of,
             )
         else:
             from flash_attn.modules.mlp import ParallelFusedMLP
@@ -846,7 +845,6 @@ class PackedFlashLlama1D(nn.Module):
         norm_head: bool = False,
         tp_mode: str = "mtp",
         mlp_layer_fusion: bool = False,
-        multiple_of: int = 256,
     ):
         super().__init__()
 
@@ -1093,7 +1091,6 @@ def build_model_with_cfg(
     max_position_embeddings=2048,
     use_dynamic_ntk_rope=False,
     mlp_layer_fusion: bool = False,
-    multiple_of: int = 256,
 ):
     """
     Builde model with config
@@ -1177,7 +1174,6 @@ def build_model_with_cfg(
         max_position_embeddings=max_position_embeddings,
         use_dynamic_ntk_rope=use_dynamic_ntk_rope,
         mlp_layer_fusion=mlp_layer_fusion,
-        multiple_of=multiple_of,
     )
 
     return _build_generic_model_1d(num_layers=num_layers, num_chunks=num_chunks, **cfg)
