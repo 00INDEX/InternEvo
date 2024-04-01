@@ -493,6 +493,7 @@ class PackedFlashLlamaLayer1D(nn.Module):
         ffn_other_init_std (float): std used to init ffn_other weight. 0.02 by default,
         init_type (str): Initialization type. Use uniform or normal. "normal" by default,
         rope_base (int): The value of `base` for rotary position embeddings. 10000 by default.
+        multiple_of (int): The value to make SwiGLU hidden layer size multiple of large power of 2.
     """
 
     def __init__(
@@ -527,6 +528,7 @@ class PackedFlashLlamaLayer1D(nn.Module):
         ffn_other_init_std: float = 0.02,
         init_type: str = "normal",
         rope_base: int = 10000,
+        multiple_of: int = 256,
     ):
         super().__init__()
         self.checkpoint = checkpoint
@@ -591,6 +593,7 @@ class PackedFlashLlamaLayer1D(nn.Module):
                 hidden_size,
                 int(hidden_size * mlp_ratio),
                 out_features=hidden_size,
+                multiple_of=multiple_of,
                 process_group=gpc.get_group(parallel_mode),
                 bias=False,
                 device=device,
@@ -787,6 +790,7 @@ class PackedFlashLlama1D(nn.Module):
         out_head_init_std (float): std used to init output lmhead weight. 0.02 by default,
         init_type (str): Initialization type. Use uniform or normal. "normal" by default,
         rope_base (int): The value of `base` for rotary position embeddings. 10000 by default.
+        multiple_of (int): The value to make SwiGLU hidden layer size multiple of large power of 2.
         norm_head (bool): Whether to use norm head. False by default.
         tp_mode (str): The string value of tensor parallel mode, should be in ["mtp", "msp", "fsp", "isp"],
                        "mtp" by default.
@@ -833,6 +837,7 @@ class PackedFlashLlama1D(nn.Module):
         out_head_init_std: float = 0.02,
         init_type: str = "normal",
         rope_base: int = 10000,
+        multiple_of: int = 256,
         norm_head: bool = False,
         tp_mode: str = "mtp",
     ):
@@ -914,6 +919,7 @@ class PackedFlashLlama1D(nn.Module):
                     init_type=init_type,
                     tp_mode=self.tp_mode,
                     rope_base=rope_base,
+                    multiple_of=multiple_of,
                 )
                 for lid in range(num_layers)
             ]
@@ -1074,6 +1080,7 @@ def build_model_with_cfg(
     out_head_init_std: float = 0.02,
     init_type: str = "normal",
     rope_base: int = 10000,
+    multiple_of: int = 256,
     norm_head: bool = False,
     max_position_embeddings=2048,
     use_dynamic_ntk_rope=False,
@@ -1116,6 +1123,7 @@ def build_model_with_cfg(
         out_head_init_std (float): std used to init output lmhead weight. 0.02 by default,
         init_type (str): Initialization type. Use uniform or normal. "normal" by default,
         rope_base (int): The value of `base` for rotary position embeddings. 10000 by default.
+        multiple_of (int): The value to make SwiGLU hidden layer size multiple of large power of 2.
         max_position_embeddings (int): The maximum position embeddings. 2048 by default.
         use_dynamic_ntk_rope (bool): Whether to use dynamic ntk rope. False by default.
     """
@@ -1155,6 +1163,7 @@ def build_model_with_cfg(
         init_type=init_type,
         rope_base=rope_base,
         norm_head=norm_head,
+        multiple_of=multiple_of,
         max_position_embeddings=max_position_embeddings,
         use_dynamic_ntk_rope=use_dynamic_ntk_rope,
     )

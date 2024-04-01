@@ -1,14 +1,14 @@
-JOB_NAME = "7b_internlm2_train"
+JOB_NAME = "20b_internlm2_train"
 model_type = "INTERNLM2_PUBLIC"
 DO_ALERT = False
 
 VOCAB_SIZE = 92544
 SEQ_LEN = 2048
-HIDDEN_SIZE = 4096
-NUM_ATTENTION_HEAD = 32
+HIDDEN_SIZE = 6144
+NUM_ATTENTION_HEAD = 48
 NUM_KV_ATTENTION_HEAD = 8
-MLP_RATIO = 3.5
-NUM_LAYER = 32
+MLP_RATIO = 8 / 3
+NUM_LAYER = 48
 ROPE_BASE = 1000000
 
 
@@ -142,7 +142,7 @@ model = dict(
     apply_post_layer_norm=False,
     dtype="torch.bfloat16",
     norm_type="rmsnorm",
-    adapt_hf=False,
+    adapt_hf=True,
     rope_base=ROPE_BASE,
     layer_norm_epsilon=1e-5,
     num_kv_attention_heads=NUM_KV_ATTENTION_HEAD,
@@ -175,8 +175,8 @@ weight parallel (dict):
     3. memory_pool: bool, enable/disable memory pool, defaults to False.
 """
 parallel = dict(
-    zero1=dict(size=8),
-    tensor=dict(size=1, mode="mtp"),
+    zero1=dict(size=16),
+    tensor=dict(size=2, mode="mtp"),
     pipeline=dict(size=1, interleaved_overlap=True),
     weight=dict(size=1, overlap=True, memory_pool=True),
 )

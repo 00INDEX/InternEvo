@@ -1,15 +1,16 @@
-JOB_NAME = "7b_internlm2_train"
+JOB_NAME = "1b_internlm2_train"
 model_type = "INTERNLM2_PUBLIC"
 DO_ALERT = False
 
 VOCAB_SIZE = 92544
 SEQ_LEN = 2048
-HIDDEN_SIZE = 4096
-NUM_ATTENTION_HEAD = 32
+HIDDEN_SIZE = 2048
+NUM_ATTENTION_HEAD = 16
 NUM_KV_ATTENTION_HEAD = 8
-MLP_RATIO = 3.5
-NUM_LAYER = 32
+MULTIPLE_OF = 128
 ROPE_BASE = 1000000
+MLP_RATIO = 4
+NUM_LAYER = 24
 
 
 MODEL_ONLY_FOLDER = "local:llm_ckpts/xxxx"
@@ -139,10 +140,12 @@ model = dict(
     num_layers=NUM_LAYER,
     no_bias=True,
     mlp_ratio=MLP_RATIO,
+    multiple_of=MULTIPLE_OF,
     apply_post_layer_norm=False,
     dtype="torch.bfloat16",
     norm_type="rmsnorm",
-    adapt_hf=False,
+    adapt_hf=True,
+    norm_head=True,
     rope_base=ROPE_BASE,
     layer_norm_epsilon=1e-5,
     num_kv_attention_heads=NUM_KV_ATTENTION_HEAD,
